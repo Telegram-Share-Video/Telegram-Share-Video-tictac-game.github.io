@@ -232,11 +232,11 @@
             if (typeof show_8902500 === 'function') {
                 show_8902500()
                     .then(() => {
-                        ('Ad shown successfully!');
+                    alart('Ad shown successfully!');
                     })
                     .catch((error) => {
                         console.error('Ad failed to load:', error);
-                        ('Ad failed to load. Please check the console for details.');
+                     alart('Ad failed to load. Please check the console for details.');
                     });
             } else {
                 console.error('show_8902500 is not defined. Monetag script may not be loaded.');
