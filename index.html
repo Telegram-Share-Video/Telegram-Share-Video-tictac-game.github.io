@@ -140,7 +140,6 @@
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src='//whephiwums.com/vignette.min.js' data-zone='8902500' data-sdk='show_8902500'></script>
 </head>
 <body>
@@ -227,12 +226,12 @@
             }, 3000);
         }
 
-        function showAd() {
-            try {
-                show_8902500();
-                alert('You have seen the ad!');
-            } catch (error) {
-                console.error('Error showing ad:', error);
+        // Interstitial ad function
+        function showInterstitialAd() {
+            if (window.show_8902500) {
+                show_8902500().then(() => {
+                    console.log("Ad watched!");
+                });
             }
         }
 
@@ -302,11 +301,11 @@
                 updateScore(winner);
                 gameActive = false;
                 showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
-                showAd();
+                showInterstitialAd(); // Show ad after game ends
             } else if (checkDraw()) {
                 gameActive = false;
                 showNotification('It\'s a draw!');
-                showAd();
+                showInterstitialAd(); // Show ad after game ends
             }
         }
 
@@ -322,11 +321,11 @@
                         updateScore(winner);
                         gameActive = false;
                         showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
-                        showAd();
+                        showInterstitialAd(); // Show ad after game ends
                     } else if (checkDraw()) {
                         gameActive = false;
                         showNotification('It\'s a draw!');
-                        showAd();
+                        showInterstitialAd(); // Show ad after game ends
                     } else {
                         currentPlayer = 'O';
                         computerMove();
