@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .scoreboard {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .mode-selector {
+            margin-bottom: 20px;
+        }
+
+        .mode-selector button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        .mode-selector button:hover {
+            background-color: #0056b3;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cell:hover {
+            background-color: #ccc;
+        }
+
+        .cell.X {
+            color: #ff4d4d;
+        }
+
+        .cell.O {
+            color: #4d79ff;
+        }
+
+        #reset {
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        #reset:hover {
+            background-color: #218838;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+    <script src='//whephiwums.com/vignette.min.js' data-zone='8902500' data-sdk='show_8902500'></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <div class="scoreboard">
+            <p>Player: <span id="player-score">0</span></p>
+            <p>Computer: <span id="computer-score">0</span></p>
+        </div>
+        <div class="mode-selector">
+            <button id="easy-mode">Easy Mode</button>
+            <button id="hard-mode">Hard Mode</button>
+        </div>
+        <div class="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <button id="reset">Reset Game</button>
+    </div>
+    <div class="notification" id="notification"></div>
+    <script>
+        const cells = document.querySelectorAll('.cell');
+        const playerScoreDisplay = document.getElementById('player-score');
+        const computerScoreDisplay = document.getElementById('computer-score');
+        const easyModeButton = document.getElementById('easy-mode');
+        const hardModeButton = document.getElementById('hard-mode');
+        const resetButton = document.getElementById('reset');
+        const notification = document.getElementById('notification');
+
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let playerScore = 0;
+        let computerScore = 0;
+        let isHardMode = false;
+
+        const winningCombinations = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        function checkWin() {
+            for (let combination of winningCombinations) {
+                const [a, b, c] = combination;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            return null;
+        }
+
+        function checkDraw() {
+            return board.every(cell => cell !== '');
+        }
+
+        function updateScore(winner) {
+            if (winner === 'X') {
+                playerScore++;
+                playerScoreDisplay.textContent = playerScore;
+            } else if (winner === 'O') {
+                computerScore++;
+                computerScoreDisplay.textContent = computerScore;
+            }
+        }
+
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+                showAd(); // Show ad after notification disappears
+            }, 3000);
+        }
+
+        function showAd() {
+            if (typeof show_8902500 === 'function') {
+                show_8902500()
+                    .then(() => {
+                        alert('Ad shown successfully!');
+                    })
+                    .catch((error) => {
+                        console.error('Ad failed to load:', error);
+                        alert('Ad failed to load. Please check the console for details.');
+                    });
+            } else {
+                console.error('show_8902500 is not defined. Monetag script may not be loaded.');
+                alert('Monetag script is not loaded. Please check the script.');
+            }
+        }
+
+        function resetBoard() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('X', 'O');
+            });
+            gameActive = true;
+        }
+
+        function computerMove() {
+            let availableCells = board.map((cell, index) => cell === '' ? index : null).filter(index => index !== null);
+            let move;
+
+            if (isHardMode) {
+                // Check for winning move
+                for (let cell of availableCells) {
+                    board[cell] = 'O';
+                    if (checkWin() === 'O') {
+                        move = cell;
+                        board[cell] = '';
+                        break;
+                    }
+                    board[cell] = '';
+                }
+
+                // Block player's winning move
+                if (move === undefined) {
+                    for (let cell of availableCells) {
+                        board[cell] = 'X';
+                        if (checkWin() === 'X') {
+                            move = cell;
+                            board[cell] = '';
+                            break;
+                        }
+                        board[cell] = '';
+                    }
+                }
+
+                // Take center if available
+                if (move === undefined && board[4] === '') {
+                    move = 4;
+                }
+
+                // Take a corner if available
+                if (move === undefined) {
+                    const corners = [0, 2, 6, 8];
+                    move = corners.find(corner => board[corner] === '');
+                }
+
+                // Take any available cell
+                if (move === undefined) {
+                    move = availableCells[Math.floor(Math.random() * availableCells.length)];
+                }
+            } else {
+                move = availableCells[Math.floor(Math.random() * availableCells.length)];
+            }
+
+            board[move] = 'O';
+            cells[move].textContent = 'O';
+            cells[move].classList.add('O');
+
+            const winner = checkWin();
+            if (winner) {
+                updateScore(winner);
+                gameActive = false;
+                showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
+            } else if (checkDraw()) {
+                gameActive = false;
+                showNotification('It\'s a draw!');
+            }
+        }
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                if (gameActive && board[cell.dataset.index] === '') {
+                    board[cell.dataset.index] = currentPlayer;
+                    cell.textContent = currentPlayer;
+                    cell.classList.add(currentPlayer);
+
+                    const winner = checkWin();
+                    if (winner) {
+                        updateScore(winner);
+                        gameActive = false;
+                        showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
+                    } else if (checkDraw()) {
+                        gameActive = false;
+                        showNotification('It\'s a draw!');
+                    } else {
+                        currentPlayer = 'O';
+                        computerMove();
+                        currentPlayer = 'X';
+                    }
+                }
+            });
+        });
+
+        easyModeButton.addEventListener('click', () => {
+            isHardMode = false;
+            resetBoard();
+        });
+
+        hardModeButton.addEventListener('click', () => {
+            isHardMode = true;
+            resetBoard();
+        });
+
+        resetButton.addEventListener('click', resetBoard);
+    </script>
+</body>
+  </html>
