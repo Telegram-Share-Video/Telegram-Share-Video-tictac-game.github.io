@@ -224,23 +224,15 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-                showAd(); // Show ad after notification disappears
             }, 3000);
         }
 
         function showAd() {
-            if (typeof show_8902500 === 'function') {
-                show_8902500()
-                    .then(() => {
-                        alert('Ad shown successfully!');
-                    })
-                    .catch((error) => {
-                        console.error('Ad failed to load:', error);
-                        alert('Ad failed to load. Please check the console for details.');
-                    });
-            } else {
-                console.error('show_8902500 is not defined. Monetag script may not be loaded.');
-                alert('Monetag script is not loaded. Please check the script.');
+            try {
+                show_8902500();
+                alert('You have seen the ad!');
+            } catch (error) {
+                console.error('Error showing ad:', error);
             }
         }
 
@@ -310,9 +302,11 @@
                 updateScore(winner);
                 gameActive = false;
                 showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
+                showAd();
             } else if (checkDraw()) {
                 gameActive = false;
                 showNotification('It\'s a draw!');
+                showAd();
             }
         }
 
@@ -328,9 +322,11 @@
                         updateScore(winner);
                         gameActive = false;
                         showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
+                        showAd();
                     } else if (checkDraw()) {
                         gameActive = false;
                         showNotification('It\'s a draw!');
+                        showAd();
                     } else {
                         currentPlayer = 'O';
                         computerMove();
