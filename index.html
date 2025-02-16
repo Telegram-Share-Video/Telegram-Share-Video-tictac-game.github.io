@@ -6,40 +6,35 @@
     <title>Tic Tac Toe</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            color: #fff;
         }
 
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 400px;
             width: 100%;
         }
 
         h1 {
             margin-bottom: 20px;
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #fff;
+            font-size: 2rem;
+            color: #333;
         }
 
         .scoreboard {
-            display: flex;
-            justify-content: space-around;
             margin-bottom: 20px;
             font-size: 1.2rem;
-            color: #fff;
+            color: #555;
         }
 
         .mode-selector {
@@ -53,21 +48,20 @@
             cursor: pointer;
             border: none;
             border-radius: 5px;
-            background-color: #4a90e2;
+            background-color: #007bff;
             color: #fff;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease;
         }
 
         .mode-selector button:hover {
-            background-color: #357abd;
-            transform: scale(1.05);
+            background-color: #0056b3;
         }
 
         .board {
             display: grid;
             grid-template-columns: repeat(3, 100px);
             grid-template-rows: repeat(3, 100px);
-            gap: 10px;
+            gap: 5px;
             margin-bottom: 20px;
             justify-content: center;
         }
@@ -75,19 +69,18 @@
         .cell {
             width: 100px;
             height: 100px;
-            background: rgba(255, 255, 255, 0.1);
+            background-color: #ddd;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 2rem;
             cursor: pointer;
-            border-radius: 10px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
 
         .cell:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
+            background-color: #ccc;
         }
 
         .cell.X {
@@ -106,12 +99,11 @@
             border-radius: 5px;
             background-color: #28a745;
             color: #fff;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease;
         }
 
         #reset:hover {
             background-color: #218838;
-            transform: scale(1.05);
         }
 
         .notification {
@@ -119,28 +111,16 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
+            background-color: #333;
             color: #fff;
             padding: 10px 20px;
             border-radius: 5px;
             font-size: 1rem;
             display: none;
             z-index: 1000;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -20px);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
         }
     </style>
-    <script src='//whephiwums.com/vignette.min.js' data-zone='8907055' data-sdk='show_8907055'></script>
+    <script src='//whephiwums.com/vignette.min.js' data-zone='8902500' data-sdk='show_8902500'></script>
 </head>
 <body>
     <div class="container">
@@ -223,15 +203,23 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
+                showAd(); // Show ad after notification disappears
             }, 3000);
         }
 
-        // Interstitial ad function
-        function showInterstitialAd() {
-            if (window.show_8907055) {
-                show_8907055().then(() => {
-                    console.log("Ad watched!");
-                });
+        function showAd() {
+            if (typeof show_8902500 === 'function') {
+                show_8902500()
+                    .then(() => {
+                        alert('Ad shown successfully!');
+                    })
+                    .catch((error) => {
+                        console.error('Ad failed to load:', error);
+                        alert('Ad failed to load. Please check the console for details.');
+                    });
+            } else {
+                console.error('show_8902500 is not defined. Monetag script may not be loaded.');
+                alert('Monetag script is not loaded. Please check the script.');
             }
         }
 
@@ -301,11 +289,9 @@
                 updateScore(winner);
                 gameActive = false;
                 showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
-                showInterstitialAd(); // Show ad after game ends
             } else if (checkDraw()) {
                 gameActive = false;
                 showNotification('It\'s a draw!');
-                showInterstitialAd(); // Show ad after game ends
             }
         }
 
@@ -321,11 +307,9 @@
                         updateScore(winner);
                         gameActive = false;
                         showNotification(winner === 'X' ? 'You win!' : 'Computer wins!');
-                        showInterstitialAd(); // Show ad after game ends
                     } else if (checkDraw()) {
                         gameActive = false;
                         showNotification('It\'s a draw!');
-                        showInterstitialAd(); // Show ad after game ends
                     } else {
                         currentPlayer = 'O';
                         computerMove();
